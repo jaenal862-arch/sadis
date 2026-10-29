@@ -26,7 +26,7 @@
     .upload-area { border: 2px dashed var(--primary); border-radius: 12px; padding: 20px; text-align: center; background-color: #f0f7fb; cursor: pointer; margin-bottom: 10px; }
     .upload-icon { font-size: 30px; color: var(--primary); margin-bottom: 5px; }
     input[type="file"] { display: none; }
-    #img-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; display: none; border: 2px solid #ddd; margin-top: 10px; }
+    #img-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; display: none; border: 2px solid #ddd; }
     #retake-container { display: none; margin-top: 10px; }
     .loader { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; }
     .loader-dark { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid var(--primary); }
@@ -52,7 +52,7 @@
     @media print {
       body { background: white; padding: 0; color: black; }
       .container { max-width: 100%; margin: 0; }
-      .tab-container, #login-section, #form-section, #pengaturan-section, .action-icons { display: none !important; }
+      .tab-container, #login-section, #form-section, .action-icons { display: none !important; }
       #main-app, #riwayat-section { display: block !important; }
       .card { box-shadow: none; padding: 0; margin: 0; border: none; }
       .riwayat-card { border: 1px solid #ccc; page-break-inside: avoid; border-left: 5px solid var(--primary); }
@@ -65,8 +65,7 @@
     <!-- LOGIN -->
     <div id="login-section" class="card">
       <div class="header-icon"><i class="fas fa-shield-alt"></i></div>
-      <h2>Portal Keamanan Sekolah</h2>
-      <h2>SMAN 13 Garut</h2>
+      <h2>Portal Keamanan</h2>
       <div class="form-group">
         <label>Username</label>
         <input type="text" id="username" placeholder="Masukkan username">
@@ -80,15 +79,12 @@
 
     <!-- UTAMA -->
     <div id="main-app" style="display: none;">
-      
-      <!-- MENU TAB -->
       <div class="tab-container">
-        <div class="tab-btn active" id="tab-form-btn" onclick="switchTab('form')"><i class="fas fa-edit"></i> Form</div>
+        <div class="tab-btn active" id="tab-form-btn" onclick="switchTab('form')"><i class="fas fa-edit"></i> Buat Laporan</div>
         <div class="tab-btn" id="tab-riwayat-btn" onclick="switchTab('riwayat')"><i class="fas fa-history"></i> Riwayat</div>
-        <div class="tab-btn" id="tab-pengaturan-btn" onclick="switchTab('pengaturan')"><i class="fas fa-cog"></i> Akun</div>
       </div>
 
-      <!-- FORM LAPORAN -->
+      <!-- FORM -->
       <div id="form-section" class="card">
         <div style="text-align: center; margin-bottom:15px;">
           <span style="background:var(--primary); color:white; padding:4px 12px; border-radius:20px; font-size:12px;">
@@ -96,7 +92,6 @@
           </span>
         </div>
         <input type="hidden" id="nama-petugas">
-        <input type="hidden" id="username-aktif">
         <input type="hidden" id="foto-base64">
 
         <div class="form-group">
@@ -129,6 +124,7 @@
           </div>
         </div>
         <button class="btn" id="btn-submit" onclick="kirimLaporan()" style="margin-top: 15px;"><i class="fas fa-paper-plane"></i> Kirim Laporan</button>
+        <button class="btn btn-danger" onclick="window.location.reload()"><i class="fas fa-power-off"></i> Keluar</button>
       </div>
 
       <!-- RIWAYAT -->
@@ -144,142 +140,66 @@
           <div id="riwayat-konten"></div>
         </div>
       </div>
-
-      <!-- PENGATURAN / GANTI PASSWORD -->
-      <div id="pengaturan-section" class="card" style="display: none;">
-        <h2 style="margin-bottom: 20px; font-size: 16px;"><i class="fas fa-lock"></i> Ganti Password</h2>
-        <div class="form-group">
-          <label>Password Lama</label>
-          <input type="password" id="old-pass" placeholder="Masukkan password saat ini">
-        </div>
-        <div class="form-group">
-          <label>Password Baru</label>
-          <input type="password" id="new-pass" placeholder="Masukkan password baru">
-        </div>
-        <div class="form-group">
-          <label>Ulangi Password Baru</label>
-          <input type="password" id="confirm-pass" placeholder="Ketik ulang password baru">
-        </div>
-        <button class="btn" id="btn-ganti-pass" onclick="ubahPassword()" style="margin-top: 15px;"><i class="fas fa-save"></i> Simpan Password Baru</button>
-        <button class="btn btn-danger" onclick="window.location.reload()"><i class="fas fa-power-off"></i> Keluar (Logout)</button>
-      </div>
     </div>
   </div>
 
   <script>
-    // URL Backend Web App Anda
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMiuU5-iNu5F0uCzv99zl0gmonw96UMIT0ARJoVU2DFP0JIeu5XYDzHPUlUqas81w4/exec";
+    // ==========================================
+    // PASTE URL GOOGLE APPS SCRIPT ANDA DI SINI
+    // ==========================================
+    const SCRIPT_URL = "MASUKKAN_URL_GOOGLE_APPS_SCRIPT_ANDA_DI_SINI";
 
-    // Navigasi Antar Tab
     function switchTab(tabName) {
-      document.getElementById('form-section').style.display = tabName === 'form' ? 'block' : 'none';
-      document.getElementById('riwayat-section').style.display = tabName === 'riwayat' ? 'block' : 'none';
-      document.getElementById('pengaturan-section').style.display = tabName === 'pengaturan' ? 'block' : 'none';
-      
-      document.getElementById('tab-form-btn').classList.toggle('active', tabName === 'form');
-      document.getElementById('tab-riwayat-btn').classList.toggle('active', tabName === 'riwayat');
-      document.getElementById('tab-pengaturan-btn').classList.toggle('active', tabName === 'pengaturan');
-
-      if(tabName === 'riwayat') loadRiwayat();
+      if(tabName === 'form') {
+        document.getElementById('form-section').style.display = 'block';
+        document.getElementById('riwayat-section').style.display = 'none';
+        document.getElementById('tab-form-btn').classList.add('active');
+        document.getElementById('tab-riwayat-btn').classList.remove('active');
+      } else {
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('riwayat-section').style.display = 'block';
+        document.getElementById('tab-riwayat-btn').classList.add('active');
+        document.getElementById('tab-form-btn').classList.remove('active');
+        loadRiwayat();
+      }
     }
 
-    // Fungsi Login
     function prosesLogin() {
       const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
       const btn = document.getElementById('btn-login');
-      
       if(!user || !pass) return alert("Isi Username dan Password!");
       
-      btn.innerHTML = 'Memverifikasi... <div class="loader"></div>'; 
-      btn.disabled = true;
+      btn.innerHTML = 'Memverifikasi... <div class="loader"></div>'; btn.disabled = true;
       
       fetch(SCRIPT_URL, {
-        method: 'POST', 
-        body: JSON.stringify({ action: 'login', user: user, pass: pass })
+        method: 'POST', body: JSON.stringify({ action: 'login', user: user, pass: pass })
       })
       .then(res => res.json())
       .then(res => {
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; 
-        btn.disabled = false;
-        
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; btn.disabled = false;
         if(res.success) {
           document.getElementById('login-section').style.display = 'none';
           document.getElementById('main-app').style.display = 'block';
-          
           document.getElementById('nama-petugas').value = res.namaLengkap;
           document.getElementById('nama-petugas-tampil').innerText = res.namaLengkap;
-          document.getElementById('username-aktif').value = user; 
-          
           loadRiwayat();
-        } else { 
-          alert(res.message); 
-        }
-      }).catch(err => { 
-        alert("Gagal terhubung ke server! Pastikan perangkat online."); 
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; 
-        btn.disabled = false; 
-      });
+        } else { alert(res.message); }
+      }).catch(err => { alert("Gagal koneksi server!"); btn.innerHTML = 'Masuk'; btn.disabled = false; });
     }
 
-    // Fungsi Mengganti Password
-    function ubahPassword() {
-      const user = document.getElementById('username-aktif').value;
-      const oldPass = document.getElementById('old-pass').value;
-      const newPass = document.getElementById('new-pass').value;
-      const confirmPass = document.getElementById('confirm-pass').value;
-      const btn = document.getElementById('btn-ganti-pass');
-
-      if(!oldPass || !newPass || !confirmPass) return alert("Semua kolom password wajib diisi!");
-      if(newPass !== confirmPass) return alert("Password baru dan ulangi password tidak cocok!");
-
-      btn.innerHTML = 'Menyimpan... <div class="loader"></div>'; 
-      btn.disabled = true;
-
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'changePassword',
-          user: user,
-          oldPass: oldPass,
-          newPass: newPass
-        })
-      })
-      .then(res => res.json())
-      .then(res => {
-        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Password Baru';
-        btn.disabled = false;
-        if(res.success) {
-          alert("✅ Password berhasil diubah! Silakan gunakan password baru pada login berikutnya.");
-          document.getElementById('old-pass').value = '';
-          document.getElementById('new-pass').value = '';
-          document.getElementById('confirm-pass').value = '';
-        } else {
-          alert("Gagal: " + res.message);
-        }
-      }).catch(err => {
-        alert("Gagal terhubung ke server!");
-        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Password Baru';
-        btn.disabled = false;
-      });
-    }
-
-    // Kompresi Foto (Upload)
     function handleFileUpload(event) {
-      const file = event.target.files[0]; 
-      if (!file) return;
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas'); 
-          const MAX_WIDTH = 800; // Resolusi foto maksimal agar cepat dikirim
-          let w = img.width, h = img.height;
+          const MAX_WIDTH = 800; let w = img.width, h = img.height;
           if (w > MAX_WIDTH) { h = Math.round((h * MAX_WIDTH) / w); w = MAX_WIDTH; }
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const base64 = canvas.toDataURL('image/jpeg', 0.6); // Kompresi 60%
-          
+          const base64 = canvas.toDataURL('image/jpeg', 0.6); 
           document.getElementById('foto-base64').value = base64;
           document.getElementById('camera-placeholder').style.display = 'none';
           document.getElementById('img-preview').src = base64; 
@@ -289,7 +209,6 @@
       }; reader.readAsDataURL(file);
     }
 
-    // Fungsi Kirim Laporan
     function kirimLaporan() {
       const btn = document.getElementById('btn-submit');
       const payload = {
@@ -300,19 +219,15 @@
         keterangan: document.getElementById('keterangan').value,
         fotoBase64: document.getElementById('foto-base64').value
       };
-      if(!payload.lokasi || !payload.status || !payload.fotoBase64) {
-        return alert("Lokasi, Status, dan Foto Wajib diisi!");
-      }
-      btn.innerHTML = 'Mengirim Data... <div class="loader"></div>'; 
-      btn.disabled = true;
-      
+
+      if(!payload.lokasi || !payload.status || !payload.fotoBase64) return alert("Lokasi, Status, dan Foto Wajib diisi!");
+      btn.innerHTML = 'Mengirim... <div class="loader"></div>'; btn.disabled = true;
+
       fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          alert("✅ Laporan Berhasil Dikirim!");
-          
-          // Reset form setelah sukses
+          alert("✅ Laporan Berhasil!");
           document.getElementById('lokasi').value = '';
           document.getElementById('status').value = '';
           document.getElementById('keterangan').value = '';
@@ -320,31 +235,28 @@
           document.getElementById('img-preview').style.display = 'none';
           document.getElementById('retake-container').style.display = 'none';
           document.getElementById('camera-placeholder').style.display = 'block';
-          
-          // Pindah ke tab riwayat
           switchTab('riwayat');
         } else { alert("Gagal: " + res.message); }
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Laporan'; btn.disabled = false;
-      }).catch(err => { 
-        alert("Terjadi kesalahan koneksi saat mengirim laporan!"); 
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Laporan'; btn.disabled = false; 
-      });
+      }).catch(err => { alert("Error koneksi!"); btn.innerHTML = 'Kirim Laporan'; btn.disabled = false; });
     }
 
-    // Fungsi Memuat Riwayat
     function loadRiwayat() {
       const box = document.getElementById('riwayat-konten');
-      box.innerHTML = '<div class="empty-state"><div class="loader loader-dark"></div> Memuat data terbaru...</div>';
+      box.innerHTML = '<div class="empty-state"><div class="loader loader-dark"></div> Memuat...</div>';
       
       fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getLaporan' }) })
       .then(res => res.json())
       .then(data => {
-        if(data.length === 0) return box.innerHTML = '<div class="empty-state">Belum ada riwayat laporan</div>';
+        if(data.length === 0) return box.innerHTML = '<div class="empty-state">Belum ada laporan</div>';
+        
         let html = '';
         data.forEach(row => {
+          // row = [Waktu, Petugas, Lokasi, Status, Ket, UrlFoto, UrlThumb]
           let badge = row[3].includes('Aman') ? 'bg-aman' : row[3].includes('Teguran') ? 'bg-teguran' : 'bg-rawan';
-          let img = (row[6] && row[6] !== "-") ? row[6] : "https://via.placeholder.com/150?text=No+Foto";
+          let img = (row[6] && row[6] !== "-") ? row[6] : "https://via.placeholder.com/150?text=No+Image";
           let link = (row[5] && row[5] !== "-") ? row[5] : "#";
+
           html += `
             <div class="riwayat-card">
               <div class="riwayat-header">
@@ -357,11 +269,12 @@
                   <p class="riwayat-ket">${row[4] || '-'}</p>
                   <div class="riwayat-petugas"><i class="fas fa-user-shield"></i> ${row[1]}</div>
                 </div>
-                ${link !== "#" ? `<a href="${link}" target="_blank"><img src="${img}" class="riwayat-img" alt="Thumbnail"></a>` : ''}
+                ${link !== "#" ? `<a href="${link}" target="_blank"><img src="${img}" class="riwayat-img"></a>` : ''}
               </div>
             </div>`;
-        }); box.innerHTML = html;
-      }).catch(err => { box.innerHTML = '<div class="empty-state" style="color:red;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data dari server</div>'; });
+        });
+        box.innerHTML = html;
+      }).catch(err => { box.innerHTML = '<div class="empty-state" style="color:red;">Gagal memuat data</div>'; });
     }
   </script>
 </body>
