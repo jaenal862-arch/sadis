@@ -80,14 +80,15 @@
 
     <!-- UTAMA -->
     <div id="main-app" style="display: none;">
-      <!-- Menambahkan Tab Pengaturan -->
+      
+      <!-- MENU TAB -->
       <div class="tab-container">
         <div class="tab-btn active" id="tab-form-btn" onclick="switchTab('form')"><i class="fas fa-edit"></i> Form</div>
         <div class="tab-btn" id="tab-riwayat-btn" onclick="switchTab('riwayat')"><i class="fas fa-history"></i> Riwayat</div>
         <div class="tab-btn" id="tab-pengaturan-btn" onclick="switchTab('pengaturan')"><i class="fas fa-cog"></i> Akun</div>
       </div>
 
-      <!-- FORM -->
+      <!-- FORM LAPORAN -->
       <div id="form-section" class="card">
         <div style="text-align: center; margin-bottom:15px;">
           <span style="background:var(--primary); color:white; padding:4px 12px; border-radius:20px; font-size:12px;">
@@ -95,7 +96,7 @@
           </span>
         </div>
         <input type="hidden" id="nama-petugas">
-        <input type="hidden" id="username-aktif"> <!-- Simpan username buat ganti pass -->
+        <input type="hidden" id="username-aktif">
         <input type="hidden" id="foto-base64">
 
         <div class="form-group">
@@ -166,177 +167,10 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sistem Laporan Patroli</title>
-  
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <style>
-    :root { --primary: #3498db; --primary-dark: #2980b9; --secondary: #2c3e50; --success: #2ecc71; --warning: #f1c40f; --danger: #e74c3c; --light: #f8f9fa; --border: #e0e6ed; }
-    body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); margin: 0; padding: 15px; min-height: 100vh; color: var(--secondary); }
-    .container { max-width: 500px; margin: 0 auto; }
-    .card { background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    h2 { text-align: center; margin-top: 0; font-weight: 600; font-size: 20px; }
-    .header-icon { text-align: center; font-size: 40px; color: var(--primary); margin-bottom: 10px; }
-    .form-group { margin-bottom: 15px; }
-    label { font-weight: 500; font-size: 13px; display: block; margin-bottom: 5px; color: #555; }
-    input[type="text"], input[type="password"], select, textarea { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 10px; box-sizing: border-box; font-family: 'Poppins', sans-serif; font-size: 14px; background-color: var(--light); }
-    .btn { width: 100%; padding: 12px; background-color: var(--primary); color: white; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s; }
-    .btn:hover { background-color: var(--primary-dark); }
-    .btn:disabled { background-color: #a0c4df; cursor: not-allowed; }
-    .btn-danger { background-color: var(--danger); margin-top: 10px; }
-    .btn-outline { background-color: transparent; border: 2px solid var(--primary); color: var(--primary); }
-    .upload-area { border: 2px dashed var(--primary); border-radius: 12px; padding: 20px; text-align: center; background-color: #f0f7fb; cursor: pointer; margin-bottom: 10px; }
-    .upload-icon { font-size: 30px; color: var(--primary); margin-bottom: 5px; }
-    input[type="file"] { display: none; }
-    #img-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 10px; display: none; border: 2px solid #ddd; margin-top: 10px; }
-    #retake-container { display: none; margin-top: 10px; }
-    .loader { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; }
-    .loader-dark { border: 3px solid rgba(0,0,0,0.1); border-top: 3px solid var(--primary); }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .tab-container { display: flex; background: #e0e6ed; border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
-    .tab-btn { flex: 1; padding: 12px; text-align: center; font-weight: 600; font-size: 13px; color: #555; cursor: pointer; transition: 0.3s; }
-    .tab-btn.active { background: var(--primary); color: white; }
-    .riwayat-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 5px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .riwayat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-    .riwayat-waktu { font-size: 11px; color: #7f8c8d; font-weight: 600; }
-    .riwayat-badge { padding: 4px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; color: white; }
-    .bg-aman { background-color: var(--success); }
-    .bg-rawan { background-color: var(--danger); }
-    .bg-teguran { background-color: var(--warning); color: #333; }
-    .riwayat-body { display: flex; gap: 15px; align-items: flex-start; }
-    .riwayat-info { flex: 1; }
-    .riwayat-lokasi { font-weight: 600; font-size: 14px; margin: 0 0 4px 0; }
-    .riwayat-ket { font-size: 12px; color: #555; margin: 0 0 8px 0; }
-    .riwayat-petugas { font-size: 11px; color: var(--primary); font-weight: 500; }
-    .riwayat-img { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid #ddd; }
-    .empty-state { text-align: center; padding: 30px 0; color: #95a5a6; font-size: 14px; }
-    .action-icons button { background: none; border: none; cursor: pointer; font-size: 18px; margin-left: 10px; transition: 0.2s; }
-    @media print {
-      body { background: white; padding: 0; color: black; }
-      .container { max-width: 100%; margin: 0; }
-      .tab-container, #login-section, #form-section, #pengaturan-section, .action-icons { display: none !important; }
-      #main-app, #riwayat-section { display: block !important; }
-      .card { box-shadow: none; padding: 0; margin: 0; border: none; }
-      .riwayat-card { border: 1px solid #ccc; page-break-inside: avoid; border-left: 5px solid var(--primary); }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    
-    <!-- LOGIN -->
-    <div id="login-section" class="card">
-      <div class="header-icon"><i class="fas fa-shield-alt"></i></div>
-      <h2>Portal Keamanan Sekolah</h2>
-      <h2>SMAN 13 Garut</h2>
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" id="username" placeholder="Masukkan username">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="password" placeholder="Masukkan password">
-      </div>
-      <button class="btn" id="btn-login" onclick="prosesLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
-    </div>
-
-    <!-- UTAMA -->
-    <div id="main-app" style="display: none;">
-      <!-- Menambahkan Tab Pengaturan -->
-      <div class="tab-container">
-        <div class="tab-btn active" id="tab-form-btn" onclick="switchTab('form')"><i class="fas fa-edit"></i> Form</div>
-        <div class="tab-btn" id="tab-riwayat-btn" onclick="switchTab('riwayat')"><i class="fas fa-history"></i> Riwayat</div>
-        <div class="tab-btn" id="tab-pengaturan-btn" onclick="switchTab('pengaturan')"><i class="fas fa-cog"></i> Akun</div>
-      </div>
-
-      <!-- FORM -->
-      <div id="form-section" class="card">
-        <div style="text-align: center; margin-bottom:15px;">
-          <span style="background:var(--primary); color:white; padding:4px 12px; border-radius:20px; font-size:12px;">
-            <i class="fas fa-user-circle"></i> <span id="nama-petugas-tampil"></span>
-          </span>
-        </div>
-        <input type="hidden" id="nama-petugas">
-        <input type="hidden" id="username-aktif"> <!-- Simpan username buat ganti pass -->
-        <input type="hidden" id="foto-base64">
-
-        <div class="form-group">
-          <label>Lokasi Patroli</label>
-          <input type="text" id="lokasi" placeholder="Misal: Gerbang Utama">
-        </div>
-        <div class="form-group">
-          <label>Status Keamanan</label>
-          <select id="status">
-            <option value="">-- Pilih Kondisi --</option>
-            <option value="Aman Terkendali">✅ Aman Terkendali</option>
-            <option value="Peringatan/Teguran">⚠️ Peringatan / Teguran</option>
-            <option value="Rawan/Bahaya">🚨 Rawan / Bahaya</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Keterangan Tambahan</label>
-          <textarea id="keterangan" rows="2" placeholder="Jelaskan detail situasi..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Bukti Foto (Wajib)</label>
-          <div id="camera-placeholder" class="upload-area" onclick="document.getElementById('file-upload').click();">
-            <div class="upload-icon"><i class="fas fa-camera"></i></div>
-            <div style="font-size:12px; color:var(--primary);">Ambil Foto / Galeri</div>
-          </div>
-          <input type="file" id="file-upload" accept="image/*" capture="environment" onchange="handleFileUpload(event)">
-          <img id="img-preview" alt="Preview Foto">
-          <div id="retake-container">
-            <button class="btn btn-outline" onclick="document.getElementById('file-upload').click();"><i class="fas fa-sync-alt"></i> Ganti Foto</button>
-          </div>
-        </div>
-        <button class="btn" id="btn-submit" onclick="kirimLaporan()" style="margin-top: 15px;"><i class="fas fa-paper-plane"></i> Kirim Laporan</button>
-      </div>
-
-      <!-- RIWAYAT -->
-      <div id="riwayat-section" style="display: none;">
-        <div class="card" style="padding: 15px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom: 2px solid var(--light); padding-bottom: 10px;">
-            <h2 style="margin:0; font-size:16px;">Laporan Terakhir</h2>
-            <div class="action-icons">
-              <button onclick="window.print()" style="color:var(--secondary);" title="Cetak / Simpan PDF"><i class="fas fa-print"></i></button>
-              <button onclick="loadRiwayat()" style="color:var(--primary);" title="Segarkan Data"><i class="fas fa-sync-alt"></i></button>
-            </div>
-          </div>
-          <div id="riwayat-konten"></div>
-        </div>
-      </div>
-
-      <!-- PENGATURAN / GANTI PASSWORD -->
-      <div id="pengaturan-section" class="card" style="display: none;">
-        <h2 style="margin-bottom: 20px; font-size: 16px;"><i class="fas fa-lock"></i> Ganti Password</h2>
-        <div class="form-group">
-          <label>Password Lama</label>
-          <input type="password" id="old-pass" placeholder="Masukkan password saat ini">
-        </div>
-        <div class="form-group">
-          <label>Password Baru</label>
-          <input type="password" id="new-pass" placeholder="Masukkan password baru">
-        </div>
-        <div class="form-group">
-          <label>Ulangi Password Baru</label>
-          <input type="password" id="confirm-pass" placeholder="Ketik ulang password baru">
-        </div>
-        <button class="btn" id="btn-ganti-pass" onclick="ubahPassword()" style="margin-top: 15px;"><i class="fas fa-save"></i> Simpan Password Baru</button>
-        <button class="btn btn-danger" onclick="window.location.reload()"><i class="fas fa-power-off"></i> Keluar (Logout)</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
+    // URL Backend Web App Anda
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMiuU5-iNu5F0uCzv99zl0gmonw96UMIT0ARJoVU2DFP0JIeu5XYDzHPUlUqas81w4/exec";
 
-    // Modifikasi Navigasi Tab
+    // Navigasi Antar Tab
     function switchTab(tabName) {
       document.getElementById('form-section').style.display = tabName === 'form' ? 'block' : 'none';
       document.getElementById('riwayat-section').style.display = tabName === 'riwayat' ? 'block' : 'none';
@@ -349,7 +183,7 @@
       if(tabName === 'riwayat') loadRiwayat();
     }
 
-    // Proses Login
+    // Fungsi Login
     function prosesLogin() {
       const user = document.getElementById('username').value;
       const pass = document.getElementById('password').value;
@@ -375,14 +209,14 @@
           
           document.getElementById('nama-petugas').value = res.namaLengkap;
           document.getElementById('nama-petugas-tampil').innerText = res.namaLengkap;
-          document.getElementById('username-aktif').value = user; // Simpan username untuk ganti pass
+          document.getElementById('username-aktif').value = user; 
           
           loadRiwayat();
         } else { 
           alert(res.message); 
         }
       }).catch(err => { 
-        alert("Gagal terhubung ke server! Pastikan URL sudah benar."); 
+        alert("Gagal terhubung ke server! Pastikan perangkat online."); 
         btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; 
         btn.disabled = false; 
       });
@@ -430,7 +264,7 @@
       });
     }
 
-    // Kompres & Ubah Foto ke Base64
+    // Kompresi Foto (Upload)
     function handleFileUpload(event) {
       const file = event.target.files[0]; 
       if (!file) return;
@@ -439,12 +273,13 @@
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas'); 
-          const MAX_WIDTH = 800;
+          const MAX_WIDTH = 800; // Resolusi foto maksimal agar cepat dikirim
           let w = img.width, h = img.height;
           if (w > MAX_WIDTH) { h = Math.round((h * MAX_WIDTH) / w); w = MAX_WIDTH; }
           canvas.width = w; canvas.height = h;
           canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const base64 = canvas.toDataURL('image/jpeg', 0.6);
+          const base64 = canvas.toDataURL('image/jpeg', 0.6); // Kompresi 60%
+          
           document.getElementById('foto-base64').value = base64;
           document.getElementById('camera-placeholder').style.display = 'none';
           document.getElementById('img-preview').src = base64; 
@@ -454,7 +289,7 @@
       }; reader.readAsDataURL(file);
     }
 
-    // Kirim Laporan
+    // Fungsi Kirim Laporan
     function kirimLaporan() {
       const btn = document.getElementById('btn-submit');
       const payload = {
@@ -470,11 +305,14 @@
       }
       btn.innerHTML = 'Mengirim Data... <div class="loader"></div>'; 
       btn.disabled = true;
+      
       fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
       .then(res => res.json())
       .then(res => {
         if (res.success) {
           alert("✅ Laporan Berhasil Dikirim!");
+          
+          // Reset form setelah sukses
           document.getElementById('lokasi').value = '';
           document.getElementById('status').value = '';
           document.getElementById('keterangan').value = '';
@@ -482,6 +320,8 @@
           document.getElementById('img-preview').style.display = 'none';
           document.getElementById('retake-container').style.display = 'none';
           document.getElementById('camera-placeholder').style.display = 'block';
+          
+          // Pindah ke tab riwayat
           switchTab('riwayat');
         } else { alert("Gagal: " + res.message); }
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Laporan'; btn.disabled = false;
@@ -491,200 +331,11 @@
       });
     }
 
-    // Load Riwayat
+    // Fungsi Memuat Riwayat
     function loadRiwayat() {
       const box = document.getElementById('riwayat-konten');
       box.innerHTML = '<div class="empty-state"><div class="loader loader-dark"></div> Memuat data terbaru...</div>';
-      fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getLaporan' }) })
-      .then(res => res.json())
-      .then(data => {
-        if(data.length === 0) return box.innerHTML = '<div class="empty-state">Belum ada riwayat laporan</div>';
-        let html = '';
-        data.forEach(row => {
-          let badge = row[3].includes('Aman') ? 'bg-aman' : row[3].includes('Teguran') ? 'bg-teguran' : 'bg-rawan';
-          let img = (row[6] && row[6] !== "-") ? row[6] : "https://via.placeholder.com/150?text=No+Foto";
-          let link = (row[5] && row[5] !== "-") ? row[5] : "#";
-          html += `
-            <div class="riwayat-card">
-              <div class="riwayat-header">
-                <div class="riwayat-waktu"><i class="far fa-clock"></i> ${row[0]}</div>
-                <div class="riwayat-badge ${badge}">${row[3]}</div>
-              </div>
-              <div class="riwayat-body">
-                <div class="riwayat-info">
-                  <p class="riwayat-lokasi">${row[2]}</p>
-                  <p class="riwayat-ket">${row[4] || '-'}</p>
-                  <div class="riwayat-petugas"><i class="fas fa-user-shield"></i> ${row[1]}</div>
-                </div>
-                ${link !== "#" ? `<a href="${link}" target="_blank"><img src="${img}" class="riwayat-img" alt="Thumbnail"></a>` : ''}
-              </div>
-            </div>`;
-        }); box.innerHTML = html;
-      }).catch(err => { box.innerHTML = '<div class="empty-state" style="color:red;"><i class="fas fa-exclamation-triangle"></i> Gagal memuat data dari server</div>'; });
-    }
-  </script>
-</body>
-</html>";
-
-    // Modifikasi Navigasi Tab
-    function switchTab(tabName) {
-      document.getElementById('form-section').style.display = tabName === 'form' ? 'block' : 'none';
-      document.getElementById('riwayat-section').style.display = tabName === 'riwayat' ? 'block' : 'none';
-      document.getElementById('pengaturan-section').style.display = tabName === 'pengaturan' ? 'block' : 'none';
       
-      document.getElementById('tab-form-btn').classList.toggle('active', tabName === 'form');
-      document.getElementById('tab-riwayat-btn').classList.toggle('active', tabName === 'riwayat');
-      document.getElementById('tab-pengaturan-btn').classList.toggle('active', tabName === 'pengaturan');
-
-      if(tabName === 'riwayat') loadRiwayat();
-    }
-
-    // Proses Login
-    function prosesLogin() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      const btn = document.getElementById('btn-login');
-      
-      if(!user || !pass) return alert("Isi Username dan Password!");
-      
-      btn.innerHTML = 'Memverifikasi... <div class="loader"></div>'; 
-      btn.disabled = true;
-      
-      fetch(SCRIPT_URL, {
-        method: 'POST', 
-        body: JSON.stringify({ action: 'login', user: user, pass: pass })
-      })
-      .then(res => res.json())
-      .then(res => {
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; 
-        btn.disabled = false;
-        
-        if(res.success) {
-          document.getElementById('login-section').style.display = 'none';
-          document.getElementById('main-app').style.display = 'block';
-          
-          document.getElementById('nama-petugas').value = res.namaLengkap;
-          document.getElementById('nama-petugas-tampil').innerText = res.namaLengkap;
-          document.getElementById('username-aktif').value = user; // Simpan username untuk ganti pass
-          
-          loadRiwayat();
-        } else { 
-          alert(res.message); 
-        }
-      }).catch(err => { 
-        alert("Gagal terhubung ke server! Pastikan URL sudah benar."); 
-        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk'; 
-        btn.disabled = false; 
-      });
-    }
-
-    // Fungsi Mengganti Password
-    function ubahPassword() {
-      const user = document.getElementById('username-aktif').value;
-      const oldPass = document.getElementById('old-pass').value;
-      const newPass = document.getElementById('new-pass').value;
-      const confirmPass = document.getElementById('confirm-pass').value;
-      const btn = document.getElementById('btn-ganti-pass');
-
-      if(!oldPass || !newPass || !confirmPass) return alert("Semua kolom password wajib diisi!");
-      if(newPass !== confirmPass) return alert("Password baru dan ulangi password tidak cocok!");
-
-      btn.innerHTML = 'Menyimpan... <div class="loader"></div>'; 
-      btn.disabled = true;
-
-      fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'changePassword',
-          user: user,
-          oldPass: oldPass,
-          newPass: newPass
-        })
-      })
-      .then(res => res.json())
-      .then(res => {
-        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Password Baru';
-        btn.disabled = false;
-        if(res.success) {
-          alert("✅ Password berhasil diubah! Silakan gunakan password baru pada login berikutnya.");
-          document.getElementById('old-pass').value = '';
-          document.getElementById('new-pass').value = '';
-          document.getElementById('confirm-pass').value = '';
-        } else {
-          alert("Gagal: " + res.message);
-        }
-      }).catch(err => {
-        alert("Gagal terhubung ke server!");
-        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Password Baru';
-        btn.disabled = false;
-      });
-    }
-
-    // Kompres & Ubah Foto ke Base64
-    function handleFileUpload(event) {
-      const file = event.target.files[0]; 
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas'); 
-          const MAX_WIDTH = 800;
-          let w = img.width, h = img.height;
-          if (w > MAX_WIDTH) { h = Math.round((h * MAX_WIDTH) / w); w = MAX_WIDTH; }
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const base64 = canvas.toDataURL('image/jpeg', 0.6);
-          document.getElementById('foto-base64').value = base64;
-          document.getElementById('camera-placeholder').style.display = 'none';
-          document.getElementById('img-preview').src = base64; 
-          document.getElementById('img-preview').style.display = 'block';
-          document.getElementById('retake-container').style.display = 'block';
-        }; img.src = e.target.result;
-      }; reader.readAsDataURL(file);
-    }
-
-    // Kirim Laporan
-    function kirimLaporan() {
-      const btn = document.getElementById('btn-submit');
-      const payload = {
-        action: 'saveLaporan',
-        petugas: document.getElementById('nama-petugas').value,
-        lokasi: document.getElementById('lokasi').value,
-        status: document.getElementById('status').value,
-        keterangan: document.getElementById('keterangan').value,
-        fotoBase64: document.getElementById('foto-base64').value
-      };
-      if(!payload.lokasi || !payload.status || !payload.fotoBase64) {
-        return alert("Lokasi, Status, dan Foto Wajib diisi!");
-      }
-      btn.innerHTML = 'Mengirim Data... <div class="loader"></div>'; 
-      btn.disabled = true;
-      fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          alert("✅ Laporan Berhasil Dikirim!");
-          document.getElementById('lokasi').value = '';
-          document.getElementById('status').value = '';
-          document.getElementById('keterangan').value = '';
-          document.getElementById('foto-base64').value = '';
-          document.getElementById('img-preview').style.display = 'none';
-          document.getElementById('retake-container').style.display = 'none';
-          document.getElementById('camera-placeholder').style.display = 'block';
-          switchTab('riwayat');
-        } else { alert("Gagal: " + res.message); }
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Laporan'; btn.disabled = false;
-      }).catch(err => { 
-        alert("Terjadi kesalahan koneksi saat mengirim laporan!"); 
-        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Laporan'; btn.disabled = false; 
-      });
-    }
-
-    // Load Riwayat
-    function loadRiwayat() {
-      const box = document.getElementById('riwayat-konten');
-      box.innerHTML = '<div class="empty-state"><div class="loader loader-dark"></div> Memuat data terbaru...</div>';
       fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'getLaporan' }) })
       .then(res => res.json())
       .then(data => {
